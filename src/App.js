@@ -1,25 +1,27 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Switch, Route, Redirect } from "react-router-dom";
+import SignIn from "./containers/SignIn";
+import { Provider } from "react-redux";
+import store from "./redux/store";
+import Dashboard from './containers/Dashboard';
+import SignUp from './containers/SignUp';
+
+const PrivateRoute = ({ component: Component, ...rest }) => (
+  <Route {...rest} render={props => (
+    localStorage.getItem('token_id') ? <Component {...props} /> : <Redirect to="/sign-in" />
+  )} />
+)
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Provider store={store}>
+      <Switch>
+        <Route path="/sign-in" component={SignIn} />
+        <Route path="/sign-up" component={SignUp} />
+        <PrivateRoute path="/" component={Dashboard} />
+        {/* <Route path="*" render={() => <Redirect to="/" />} /> */}
+      </Switch>
+    </Provider>
   );
 }
 
